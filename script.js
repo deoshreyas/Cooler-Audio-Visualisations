@@ -25,7 +25,8 @@ function musicStateChange() {
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-var snail = document.querySelector("#snail");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 // Set up audio
 const fftsize_set = 512;
@@ -66,29 +67,51 @@ class Bar {
     }
 
     update(input) {
-        this.height = input;
+        const sound = input*1000;
+        if (sound>this.height) {
+            this.height = sound;
+        } else {
+            this.height -= this.height * 0.03;
+        }
     }
 
-    draw(context, volume) {
-        context.fillStyle = this.colour;
-        context.fillRect(this.x, this.y, this.width, this.height);
+    draw(context) {
+        context.strokeStyle = this.colour;
+        context.lineWidth = this.width;
+        context.save();
+        context.rotate(this.index * 0.043);
+        context.beginPath();
+        context.bezierCurveTo(this.x/2, this.y/2, this.height * -0.3 - 100, this.height + 50, this.x, this.y);
+        context.stroke()
+        if (this.index>100) {
+            context.beginPath();
+            context.arc(this.x, this.y+this.height/2, this.height*0.01, 0, Math.PI * 2);
+            context.stroke();
+        }
+        context.restore();
     }
 }
 
 let bars = [];
 let barWidth = canvas.width/(fftsize_set/2);
 function createBars() {
-    for (let i = 0; i < fftsize_set/2; i++) {
-        bars.push(new Bar(barWidth*i, 200, barWidth, 50, 'red', i));
+    for (let i = 1; i < fftsize_set/2; i++) {
+        let colour = 'hsl(' + 100+i*2 + ',100%, 50%';
+        bars.push(new Bar(0, i*0.9, 1, 90, colour, i));
     }
 }
 createBars();
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const samples = getSamples();
+    ctx.save();
+    ctx.translate(canvas.width/2 - 70, canvas.height/2 + 50)
     bars.forEach((bar, index) => {
-        bar.draw(ctx, 1);
+        bar.update(samples[index]);
+        bar.draw(ctx);
     });
+    ctx.restore();
     requestAnimationFrame(animate);
 }
 animate();
@@ -121,3 +144,8 @@ document.querySelector("#musicInput").addEventListener("change", function() {
 function changeMusicSource() {
     document.querySelector("#musicInput").click(); // Trigger the file input
 }
+
+window.addEventListener('resize', function() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+})
