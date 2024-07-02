@@ -1,0 +1,67 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    overflow: hidden;
+}
+
+#snail {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    z-index: -1;
+}
+
+@media only screen and (max-width: 750px) {
+    #snail {
+        width: 80vw;
+    }
+}
+
+#snail path {
+    stroke-dasharray: 1500;
+    stroke-dashoffset: 0;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+button {
+    position: absolute;
+    left: 1em;
+    bottom: 1em;
+    font-size: 1.5em;
+    padding: .1em;
+    border: 0;
+    outline: 0;
+    border-radius: 100em;
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
+}
+
+button#musicInputBtn {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    left: calc(100vw - 1em - 2em);
+    font-size: 1.5em;
+    padding: .1em;
+    border: 0;
+    outline: 0;
+    border-radius: 100em;
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
+}
